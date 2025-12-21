@@ -55,28 +55,16 @@ if (isset($_POST["subscribe"])) {
     $select_plan->execute([$meal_plan_id]);
     $plan = $select_plan->fetch(PDO::FETCH_ASSOC);
 
-    $check_active = $conn->prepare(
-        "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status = 'Active'",
+    $check_existing = $conn->prepare(
+        "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status IN ('Pending','Active')",
     );
-    $check_active->execute([$user_id]);
-    $active_total = (int) $check_active->fetch(PDO::FETCH_ASSOC)["total"];
-
-    $check_pending_same = $conn->prepare(
-        "SELECT COUNT(*) AS total
-         FROM `subscriptions`
-         WHERE user_id = ? AND meal_plan_id = ? AND status = 'Pending'",
-    );
-    $check_pending_same->execute([$user_id, $meal_plan_id]);
-    $pending_same_total = (int) $check_pending_same->fetch(PDO::FETCH_ASSOC)[
-        "total"
-    ];
+    $check_existing->execute([$user_id]);
+    $existing_total = (int) $check_existing->fetch(PDO::FETCH_ASSOC)["total"];
 
     if (!$plan) {
         $message[] = "meal plan not found!";
-    } elseif ($active_total > 0) {
-        $message[] = "you already have an active subscription!";
-    } elseif ($pending_same_total > 0) {
-        $message[] = "plan already selected for subscription!";
+    } elseif ($existing_total > 0) {
+        $message[] = "You already subscribed to a plan.";
     } else {
         $start_date = date("Y-m-d");
         $end_date = date(
@@ -84,38 +72,17 @@ if (isset($_POST["subscribe"])) {
             strtotime($start_date . " +" . $plan["duration"] . " days"),
         );
 
-        $check_pending = $conn->prepare(
-            "SELECT id FROM `subscriptions` WHERE user_id = ? AND status = 'Pending' ORDER BY id DESC LIMIT 1",
+        $insert_subscription = $conn->prepare(
+            "INSERT INTO `subscriptions`(user_id, meal_plan_id, start_date, end_date, status, payment_status) VALUES(?,?,?,?,?,?)",
         );
-        $check_pending->execute([$user_id]);
-        $pending = $check_pending->fetch(PDO::FETCH_ASSOC);
-
-        if ($pending) {
-            $update_pending = $conn->prepare(
-                "UPDATE `subscriptions`
-                 SET meal_plan_id = ?, start_date = ?, end_date = ?, payment_status = 'unpaid'
-                 WHERE id = ? AND user_id = ?",
-            );
-            $update_pending->execute([
-                $meal_plan_id,
-                $start_date,
-                $end_date,
-                $pending["id"],
-                $user_id,
-            ]);
-        } else {
-            $insert_subscription = $conn->prepare(
-                "INSERT INTO `subscriptions`(user_id, meal_plan_id, start_date, end_date, status, payment_status) VALUES(?,?,?,?,?,?)",
-            );
-            $insert_subscription->execute([
-                $user_id,
-                $meal_plan_id,
-                $start_date,
-                $end_date,
-                "Pending",
-                "unpaid",
-            ]);
-        }
+        $insert_subscription->execute([
+            $user_id,
+            $meal_plan_id,
+            $start_date,
+            $end_date,
+            "Pending",
+            "unpaid",
+        ]);
 
         $message[] = "plan selected for subscription!";
     }

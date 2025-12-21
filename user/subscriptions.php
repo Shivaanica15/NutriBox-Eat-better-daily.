@@ -164,6 +164,13 @@ $select_current = $conn->prepare(
 $select_current->execute([$user_id]);
 $current_subscription = $select_current->fetch(PDO::FETCH_ASSOC);
 
+$count_current = $conn->prepare(
+    "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status IN ('Pending','Active')",
+);
+$count_current->execute([$user_id]);
+$has_current_subscription =
+    (int) $count_current->fetch(PDO::FETCH_ASSOC)["total"] > 0;
+
 $subscription_logs = [];
 if ($current_subscription) {
     $logs = $conn->prepare(
@@ -439,7 +446,9 @@ if (isset($_POST["request_plan_change"]) && $current_subscription) {
 
 <section class="placed-orders">
 
-   <h1 class="title">your subscription</h1>
+   <h1 class="title"><?= $has_current_subscription
+       ? "Current Subscription"
+       : "Subscription History" ?></h1>
 
    <div class="box-container">
 

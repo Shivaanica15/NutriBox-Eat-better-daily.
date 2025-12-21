@@ -112,7 +112,7 @@ if (isset($message)) {
              "total"
          ];
          $count_subscriptions = $conn->prepare(
-             "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status = 'Active'",
+             "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status IN ('Active','Pending')",
          );
          $count_subscriptions->execute([$user_id]);
          $subscription_total = (int) $count_subscriptions->fetch(
