@@ -1,0 +1,574 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap");
+
+:root {
+    --admin-bg: #f5f6f8;
+    --admin-card: #ffffff;
+    --admin-text: #1f2937;
+    --admin-muted: #6b7280;
+    --admin-border: #e2e8f0;
+    --admin-accent: #28a745;
+    --admin-accent-soft: rgba(40, 167, 69, 0.12);
+    --admin-danger: #dc2626;
+    --admin-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    --admin-shadow-hover: 0 14px 28px rgba(15, 23, 42, 0.12);
+    --admin-sidebar-width: 260px;
+}
+
+.admin-body,
+.admin-body * {
+    box-sizing: border-box;
+}
+
+.admin-body {
+    font-family: "Source Sans 3", sans-serif;
+    margin: 0;
+    background: var(--admin-bg);
+    color: var(--admin-text);
+    min-height: 100vh;
+    line-height: 1.6;
+    animation: adminFadeIn 0.45s ease both;
+}
+
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+}
+
+.admin-body a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.admin-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--admin-sidebar-width);
+    background: var(--admin-card);
+    border-right: 1px solid var(--admin-border);
+    padding: 2.2rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto;
+    z-index: 1100;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.sidebar-brand .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.02rem;
+    color: var(--admin-text);
+}
+
+.sidebar-close {
+    display: none;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem 1.2rem;
+    border-radius: 0.8rem;
+    color: var(--admin-muted);
+    font-size: 1.5rem;
+    font-weight: 600;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.sidebar-nav .nav-link i {
+    width: 1.8rem;
+    text-align: center;
+    color: var(--admin-muted);
+}
+
+.sidebar-nav .nav-link.active,
+.sidebar-nav .nav-link:hover {
+    color: var(--admin-text);
+    background: var(--admin-accent-soft);
+    transform: translateX(2px);
+}
+
+.sidebar-nav .nav-link.active i,
+.sidebar-nav .nav-link:hover i {
+    color: var(--admin-accent);
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    background: var(--admin-bg);
+}
+
+.profile-card img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--admin-border);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.profile-role {
+    font-size: 1.2rem;
+    color: var(--admin-muted);
+}
+
+.admin-main {
+    margin-left: var(--admin-sidebar-width);
+    flex: 1;
+    padding: 2.4rem 3.2rem 4rem;
+}
+
+.admin-topbar {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: var(--admin-card);
+    border: 1px solid var(--admin-border);
+    border-radius: 1.2rem;
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 2.4rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.topbar-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--admin-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.8rem;
+    border: 1px solid var(--admin-border);
+    background: var(--admin-card);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--admin-text);
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    box-shadow: var(--admin-shadow);
+    transform: translateY(-1px);
+}
+
+section {
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+}
+
+.title {
+    text-align: left;
+    margin: 0 0 2.4rem;
+    text-transform: uppercase;
+    color: var(--admin-text);
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: 0.22rem;
+}
+
+.title::after {
+    content: "";
+    width: 120px;
+    height: 3px;
+    background: var(--admin-accent);
+    display: block;
+    margin-top: 1rem;
+}
+
+.message {
+    background: var(--admin-card);
+    border: 1px solid var(--admin-border);
+    border-left: 4px solid var(--admin-accent);
+    border-radius: 0.8rem;
+    padding: 1.2rem 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: var(--admin-shadow);
+    margin-bottom: 2rem;
+}
+
+.message span {
+    font-size: 1.5rem;
+    color: var(--admin-text);
+}
+
+.message i {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--admin-muted);
+}
+
+.message i:hover {
+    color: var(--admin-text);
+}
+
+.btn,
+.delete-btn,
+.option-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 1rem 1.6rem;
+    border-radius: 0.8rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.admin-body input,
+.admin-body select,
+.admin-body textarea,
+.admin-body button {
+    font-family: inherit;
+}
+
+.admin-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+}
+
+.inputBox {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.add-products form textarea.box {
+    min-height: 180px;
+    resize: vertical;
+}
+
+.btn {
+    background: var(--admin-accent);
+    color: #fff;
+}
+
+.option-btn {
+    background: #4b5563;
+    color: #fff;
+}
+
+.delete-btn {
+    background: var(--admin-danger);
+    color: #fff;
+}
+
+.btn:hover,
+.option-btn:hover,
+.delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-hover);
+}
+
+.flex-btn {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.flex-btn > * {
+    flex: 1;
+    min-width: 140px;
+}
+
+.dashboard .box-container,
+.show-products .box-container,
+.placed-orders .box-container,
+.user-accounts .box-container,
+.messages .box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.dashboard .box-container .box,
+.show-products .box-container .box,
+.placed-orders .box-container .box,
+.user-accounts .box-container .box,
+.messages .box-container .box {
+    background: var(--admin-card);
+    border: 1px solid var(--admin-border);
+    border-radius: 1.2rem;
+    padding: 2.2rem;
+    box-shadow: var(--admin-shadow);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    animation: adminCardIn 0.45s ease both;
+}
+
+.dashboard .box-container .box:hover,
+.show-products .box-container .box:hover,
+.placed-orders .box-container .box:hover,
+.user-accounts .box-container .box:hover,
+.messages .box-container .box:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--admin-shadow-hover);
+}
+
+.dashboard .box-container .box:nth-child(1) {
+    animation-delay: 0.05s;
+}
+.dashboard .box-container .box:nth-child(2) {
+    animation-delay: 0.1s;
+}
+.dashboard .box-container .box:nth-child(3) {
+    animation-delay: 0.15s;
+}
+.dashboard .box-container .box:nth-child(4) {
+    animation-delay: 0.2s;
+}
+.dashboard .box-container .box:nth-child(5) {
+    animation-delay: 0.25s;
+}
+.dashboard .box-container .box:nth-child(6) {
+    animation-delay: 0.3s;
+}
+.dashboard .box-container .box:nth-child(7) {
+    animation-delay: 0.35s;
+}
+.dashboard .box-container .box:nth-child(8) {
+    animation-delay: 0.4s;
+}
+
+.dashboard .box-container .box .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--admin-accent-soft);
+    color: var(--admin-accent);
+    font-size: 2rem;
+    margin-bottom: 1.4rem;
+}
+
+.dashboard .box-container .box h3 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 0.6rem;
+}
+
+.dashboard .box-container .box p {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    color: var(--admin-muted);
+    margin: 0 0 1.6rem;
+}
+
+.add-products form,
+.update-product form,
+.update-profile form {
+    background: var(--admin-card);
+    border: 1px solid var(--admin-border);
+    border-radius: 1.2rem;
+    padding: 2.4rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.add-products form .box,
+.update-product form .box,
+.update-profile form .box,
+.placed-orders .box-container .box .drop-down {
+    width: 100%;
+    padding: 1.2rem 1.4rem;
+    border-radius: 0.8rem;
+    border: 1px solid var(--admin-border);
+    background: #f8fafc;
+    font-size: 1.4rem;
+    color: var(--admin-text);
+}
+
+.add-products form .box:focus,
+.update-product form .box:focus,
+.update-profile form .box:focus,
+.placed-orders .box-container .box .drop-down:focus {
+    border-color: rgba(40, 167, 69, 0.6);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+.show-products .box-container .box .price {
+    background: var(--admin-accent);
+    color: #fff;
+    border-radius: 0.8rem;
+    padding: 0.5rem 1rem;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.show-products .box-container .box .name {
+    color: var(--admin-text);
+}
+
+.show-products .box-container .box .cat,
+.placed-orders .box-container .box p span,
+.user-accounts .box-container .box p span,
+.messages .box-container .box p span {
+    color: var(--admin-accent);
+}
+
+.show-products .box-container .box .details,
+.placed-orders .box-container .box p,
+.user-accounts .box-container .box p,
+.messages .box-container .box p {
+    color: var(--admin-muted);
+}
+
+.user-accounts .box-container .box img {
+    border: 2px solid var(--admin-border);
+}
+
+.empty {
+    background: var(--admin-card);
+    border: 1px solid var(--admin-border);
+    color: var(--admin-muted);
+    border-radius: 0.8rem;
+    padding: 1.4rem;
+    text-align: center;
+}
+
+.admin-overlay {
+    display: none;
+}
+
+@keyframes adminFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes adminCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 991px) {
+    .admin-main {
+        margin-left: 0;
+        padding: 2rem;
+    }
+
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+    .admin-body.admin-sidebar-open .admin-sidebar {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: inline-flex;
+    }
+
+    .admin-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+    }
+
+    .admin-body.admin-sidebar-open .admin-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .title {
+        font-size: 2.2rem;
+        letter-spacing: 0.16rem;
+    }
+
+    .dashboard .box-container,
+    .show-products .box-container,
+    .placed-orders .box-container,
+    .user-accounts .box-container,
+    .messages .box-container {
+        grid-template-columns: 1fr;
+    }
+}
