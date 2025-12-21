@@ -1,68 +1,93 @@
 <?php
 
-@include '../config.php';
+@include "../config.php";
 
 session_start();
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION["user_id"];
 
-if(!isset($user_id)){
-   header('location:login.php');
-};
-
-if(isset($_POST['update_profile'])){
-
-   $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
-   $email = $_POST['email'];
-   $email = filter_var($email, FILTER_SANITIZE_STRING);
-
-   $update_profile = $conn->prepare("UPDATE `users` SET name = ?, email = ? WHERE id = ?");
-   $update_profile->execute([$name, $email, $user_id]);
-
-   $image = $_FILES['image']['name'];
-   $image = filter_var($image, FILTER_SANITIZE_STRING);
-   $image_size = $_FILES['image']['size'];
-   $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = 'uploaded_img/'.$image;
-   $old_image = $_POST['old_image'];
-
-   if(!empty($image)){
-      if($image_size > 2000000){
-         $message[] = 'image size is too large!';
-      }else{
-         $update_image = $conn->prepare("UPDATE `users` SET image = ? WHERE id = ?");
-         $update_image->execute([$image, $user_id]);
-         if($update_image){
-            move_uploaded_file($image_tmp_name, $image_folder);
-            unlink('uploaded_img/'.$old_image);
-            $message[] = 'image updated successfully!';
-         };
-      };
-   };
-
-   $old_pass = $_POST['old_pass'];
-   $update_pass = md5($_POST['update_pass']);
-   $update_pass = filter_var($update_pass, FILTER_SANITIZE_STRING);
-   $new_pass = md5($_POST['new_pass']);
-   $new_pass = filter_var($new_pass, FILTER_SANITIZE_STRING);
-   $confirm_pass = md5($_POST['confirm_pass']);
-   $confirm_pass = filter_var($confirm_pass, FILTER_SANITIZE_STRING);
-
-   if(!empty($update_pass) AND !empty($new_pass) AND !empty($confirm_pass)){
-      if($update_pass != $old_pass){
-         $message[] = 'old password not matched!';
-      }elseif($new_pass != $confirm_pass){
-         $message[] = 'confirm password not matched!';
-      }else{
-         $update_pass_query = $conn->prepare("UPDATE `users` SET password = ? WHERE id = ?");
-         $update_pass_query->execute([$confirm_pass, $user_id]);
-         $message[] = 'password updated successfully!';
-      }
-   }
-
+if (!isset($user_id)) {
+    header("location:login.php");
 }
 
+if (isset($_POST["update_profile"])) {
+    $name = $_POST["name"];
+    $name = filter_var($name, FILTER_SANITIZE_STRING);
+    $email = $_POST["email"];
+    $email = filter_var($email, FILTER_SANITIZE_STRING);
+
+    $update_profile = $conn->prepare(
+        "UPDATE `users` SET name = ?, email = ? WHERE id = ?",
+    );
+    $update_profile->execute([$name, $email, $user_id]);
+
+    $image = $_FILES["image"]["name"];
+    $image = filter_var($image, FILTER_SANITIZE_STRING);
+    $image_size = $_FILES["image"]["size"];
+    $image_tmp_name = $_FILES["image"]["tmp_name"];
+    $image_folder = "../uploaded_img/" . $image;
+    $old_image = $_POST["old_image"];
+
+    if (!empty($image)) {
+        if ($image_size > 2000000) {
+            $message[] = "image size is too large!";
+        } else {
+            $update_image = $conn->prepare(
+                "UPDATE `users` SET image = ? WHERE id = ?",
+            );
+            $update_image->execute([$image, $user_id]);
+            if ($update_image) {
+                move_uploaded_file($image_tmp_name, $image_folder);
+                if (
+                    !empty($old_image) &&
+                    file_exists("../uploaded_img/" . $old_image)
+                ) {
+                    unlink("../uploaded_img/" . $old_image);
+                }
+                $message[] = "image updated successfully!";
+            }
+        }
+    }
+
+    $old_pass = $_POST["old_pass"];
+    $update_pass = md5($_POST["update_pass"]);
+    $update_pass = filter_var($update_pass, FILTER_SANITIZE_STRING);
+    $new_pass = md5($_POST["new_pass"]);
+    $new_pass = filter_var($new_pass, FILTER_SANITIZE_STRING);
+    $confirm_pass = md5($_POST["confirm_pass"]);
+    $confirm_pass = filter_var($confirm_pass, FILTER_SANITIZE_STRING);
+
+    if (!empty($update_pass) and !empty($new_pass) and !empty($confirm_pass)) {
+        if ($update_pass != $old_pass) {
+            $message[] = "old password not matched!";
+        } elseif ($new_pass != $confirm_pass) {
+            $message[] = "confirm password not matched!";
+        } else {
+            $update_pass_query = $conn->prepare(
+                "UPDATE `users` SET password = ? WHERE id = ?",
+            );
+            $update_pass_query->execute([$confirm_pass, $user_id]);
+            $message[] = "password updated successfully!";
+        }
+    }
+}
+
+$select_profile = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
+$select_profile->execute([$user_id]);
+$fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+if (!$fetch_profile) {
+    $fetch_profile = [
+        "name" => "",
+        "email" => "",
+        "password" => "",
+        "image" => "",
+    ];
+}
+
+$default_avatar = "../images/default-avatar.svg";
+$profile_image = !empty($fetch_profile["image"])
+    ? "../uploaded_img/" . $fetch_profile["image"]
+    : $default_avatar;
 ?>
 
 <!DOCTYPE html>
@@ -82,26 +107,34 @@ if(isset($_POST['update_profile'])){
 </head>
 <body>
 
-<?php include 'user_header.php'; ?>
+<?php include "user_header.php"; ?>
 
 <section class="update-profile">
 
    <h1 class="title">update profile</h1>
 
    <form action="" method="POST" enctype="multipart/form-data">
-      <img src="uploaded_img/<?= $fetch_profile['image']; ?>" alt="">
+      <img src="<?= $profile_image ?>" alt="" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center;display:block;margin:0 auto 1.5rem;">
       <div class="flex">
          <div class="inputBox">
             <span>username :</span>
-            <input type="text" name="name" value="<?= $fetch_profile['name']; ?>" placeholder="update username" required class="box">
+            <input type="text" name="name" value="<?= $fetch_profile[
+                "name"
+            ] ?>" placeholder="update username" required class="box">
             <span>email :</span>
-            <input type="email" name="email" value="<?= $fetch_profile['email']; ?>" placeholder="update email" required class="box">
+            <input type="email" name="email" value="<?= $fetch_profile[
+                "email"
+            ] ?>" placeholder="update email" required class="box">
             <span>update pic :</span>
             <input type="file" name="image" accept="image/jpg, image/jpeg, image/png" class="box">
-            <input type="hidden" name="old_image" value="<?= $fetch_profile['image']; ?>">
+            <input type="hidden" name="old_image" value="<?= $fetch_profile[
+                "image"
+            ] ?>">
          </div>
          <div class="inputBox">
-            <input type="hidden" name="old_pass" value="<?= $fetch_profile['password']; ?>">
+            <input type="hidden" name="old_pass" value="<?= $fetch_profile[
+                "password"
+            ] ?>">
             <span>old password :</span>
             <input type="password" name="update_pass" placeholder="enter previous password" class="box">
             <span>new password :</span>
@@ -127,11 +160,10 @@ if(isset($_POST['update_profile'])){
 
 
 
-<?php include 'user_footer.php'; ?>
+<?php include "user_footer.php"; ?>
 
 
 <script src="js/user.js"></script>
 
 </body>
 </html>
-

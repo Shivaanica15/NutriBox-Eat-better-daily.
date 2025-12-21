@@ -1,6 +1,6 @@
 <?php
 
-$db_name = "mysql:host=localhost;dbname=nutribox_db";
+$db_name = "mysql:host=localhost;port=3307;dbname=nutribox_db";
 $username = "root";
 $password = "";
 
