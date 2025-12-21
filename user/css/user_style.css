@@ -216,6 +216,7 @@
     border-radius: 0.5rem;
     position: relative;
     margin: 0 auto;
+    animation: quickFadeUp 0.6s ease both;
 }
 
 .quick-view .box img {
@@ -261,6 +262,66 @@
     line-height: 2;
     font-size: 1.5rem;
     color: var(--light-color);
+}
+
+.quick-view .subscribe-primary {
+    width: 100%;
+    margin-top: 1.2rem;
+    padding: 1.4rem 3.2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    letter-spacing: 0.02rem;
+    box-shadow: 0 0.6rem 1.6rem rgba(39, 174, 96, 0.25);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    min-height: 5rem;
+}
+
+.quick-view .subscribe-primary:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 1rem 2rem rgba(39, 174, 96, 0.3);
+}
+
+.quick-view .subscribe-primary:active {
+    transform: translateY(0) scale(0.99);
+}
+
+.quick-view .subscribe-primary.is-loading {
+    cursor: progress;
+    opacity: 0.9;
+}
+
+.quick-view .subscribe-primary.is-disabled,
+.quick-view .subscribe-primary:disabled {
+    background: #dfe6e1;
+    color: #7a8b80;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.quick-view .subscribe-primary i {
+    font-size: 1.6rem;
+}
+
+@keyframes quickFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .p-category {

@@ -112,12 +112,18 @@ if (isset($message)) {
              "total"
          ];
          $count_subscriptions = $conn->prepare(
-             "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status IN ('Active','Pending')",
+             "SELECT COUNT(*) AS total
+              FROM `subscriptions`
+              WHERE user_id = ?
+                AND status IN ('Active','Pending','Paused','ChangeRequested')",
          );
          $count_subscriptions->execute([$user_id]);
          $subscription_total = (int) $count_subscriptions->fetch(
              PDO::FETCH_ASSOC,
          )["total"];
+         if ($subscription_total > 1) {
+             $subscription_total = 1;
+         }
          $unread_notifications = 0;
          if (table_exists($conn, "notifications")) {
              $count_notifications = $conn->prepare(

@@ -37,59 +37,45 @@ if (!isset($user_id)) {
    <div class="box-container">
 
    <?php
-   $select_orders = $conn->prepare(
-       "SELECT so.*, m.name AS meal_name, m.duration
-          FROM `subscription_orders` AS so
-          LEFT JOIN `meal_plans` AS m ON so.meal_plan_id = m.id
-          WHERE so.user_id = ?
-          ORDER BY so.placed_on DESC",
+   $select_current = $conn->prepare(
+       "SELECT s.start_date AS placed_on,
+               s.status AS subscription_status,
+               s.payment_status,
+               m.name AS meal_name,
+               m.duration,
+               m.price
+        FROM `subscriptions` AS s
+        LEFT JOIN `meal_plans` AS m ON s.meal_plan_id = m.id
+        WHERE s.user_id = ?
+          AND s.status IN ('Active','Pending','Paused','ChangeRequested')
+        ORDER BY s.id DESC
+        LIMIT 1",
    );
-   $select_orders->execute([$user_id]);
-   $orders = $select_orders->fetchAll(PDO::FETCH_ASSOC);
+   $select_current->execute([$user_id]);
+   $current = $select_current->fetch(PDO::FETCH_ASSOC);
 
-   if (!$orders) {
-       $select_orders = $conn->prepare(
-           "SELECT s.start_date AS placed_on, s.status AS subscription_status,
-                   s.payment_status, m.name AS meal_name, m.duration, m.price
-            FROM `subscriptions` AS s
-            LEFT JOIN `meal_plans` AS m ON s.meal_plan_id = m.id
-            WHERE s.user_id = ?
-            ORDER BY s.start_date DESC",
-       );
-       $select_orders->execute([$user_id]);
-       $orders = $select_orders->fetchAll(PDO::FETCH_ASSOC);
-   }
-
-   if ($orders) {
-       foreach ($orders as $fetch_orders) {
-           $plan_name =
-               $fetch_orders["meal_name"] !== null
-                   ? $fetch_orders["meal_name"]
-                   : $fetch_orders["plan_summary"] ?? "N/A"; ?>
+   if ($current) {
+       $plan_name =
+           $current["meal_name"] !== null ? $current["meal_name"] : "N/A"; ?>
    <div class="box">
-      <p> placed on : <span><?= $fetch_orders["placed_on"] ?></span> </p>
+      <p> placed on : <span><?= $current["placed_on"] ?></span> </p>
       <p> meal plan : <span><?= $plan_name ?></span> </p>
-      <p> duration : <span><?= $fetch_orders["duration"] !== null
-          ? $fetch_orders["duration"] . " days"
+      <p> duration : <span><?= $current["duration"] !== null
+          ? $current["duration"] . " days"
           : "N/A" ?></span> </p>
-      <p> total price : <span>$<?= isset($fetch_orders["total_price"])
-          ? $fetch_orders["total_price"]
-          : $fetch_orders["price"] ?? "N/A" ?>/-</span> </p>
+      <p> total price : <span>$<?= $current["price"] ?? "N/A" ?>/-</span> </p>
       <p> payment status : <span style="color:<?php if (
-          $fetch_orders["payment_status"] == "Unpaid"
+          $current["payment_status"] == "Unpaid"
       ) {
           echo "red";
       } else {
           echo "green";
-      } ?>"><?= $fetch_orders["payment_status"] ?></span> </p>
-      <?php if (isset($fetch_orders["subscription_status"])) { ?>
-      <p> subscription status : <span><?= $fetch_orders[
+      } ?>"><?= $current["payment_status"] ?></span> </p>
+      <p> subscription status : <span><?= $current[
           "subscription_status"
       ] ?></span> </p>
-      <?php } ?>
    </div>
    <?php
-       }
    } else {
        echo '<p class="empty">no subscriptions placed yet!</p>';
    }

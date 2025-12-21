@@ -105,6 +105,7 @@ $meal_plan_id = $_GET["pid"] ?? ($_GET["id"] ?? "");
 $meal_plan_id = filter_var($meal_plan_id, FILTER_SANITIZE_NUMBER_INT);
 
 $is_in_wishlist = false;
+$is_subscribed = false;
 if (!empty($meal_plan_id)) {
     $check_wishlist = $conn->prepare(
         "SELECT COUNT(*) AS total FROM `wishlist` WHERE user_id = ? AND meal_plan_id = ?",
@@ -112,6 +113,17 @@ if (!empty($meal_plan_id)) {
     $check_wishlist->execute([$user_id, $meal_plan_id]);
     $is_in_wishlist =
         (int) $check_wishlist->fetch(PDO::FETCH_ASSOC)["total"] > 0;
+
+    $check_subscription = $conn->prepare(
+        "SELECT COUNT(*) AS total
+         FROM `subscriptions`
+         WHERE user_id = ?
+           AND meal_plan_id = ?
+           AND status IN ('Active','Pending','Paused','ChangeRequested')",
+    );
+    $check_subscription->execute([$user_id, $meal_plan_id]);
+    $is_subscribed =
+        (int) $check_subscription->fetch(PDO::FETCH_ASSOC)["total"] > 0;
 }
 ?>
 
@@ -156,8 +168,22 @@ if (!empty($meal_plan_id)) {
          <input type="submit" value="remove from wishlist" class="delete-btn" name="remove_from_wishlist">
       <?php } else { ?>
          <input type="submit" value="save plan" class="option-btn" name="add_to_wishlist">
-         <input type="submit" value="subscribe now" class="btn" name="subscribe">
       <?php } ?>
+      <button
+         type="submit"
+         name="subscribe"
+         class="subscribe-primary<?= $is_subscribed ? " is-disabled" : "" ?>"
+         <?= $is_subscribed ? "disabled" : "" ?>
+         data-subscribe-btn
+      >
+         <?php if ($is_subscribed) { ?>
+            <i class="fas fa-check" aria-hidden="true"></i>
+            <span>Subscribed</span>
+         <?php } else { ?>
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <span>Subscribe Now</span>
+         <?php } ?>
+      </button>
    </form>
    <?php }
    } else {
@@ -170,6 +196,21 @@ if (!empty($meal_plan_id)) {
 <?php include "user_footer.php"; ?>
 
 <script src="js/user.js"></script>
+<script>
+const subscribeButton = document.querySelector("[data-subscribe-btn]");
+if (subscribeButton && !subscribeButton.disabled) {
+   subscribeButton.addEventListener("click", () => {
+      subscribeButton.classList.add("is-loading");
+      subscribeButton.setAttribute("disabled", "disabled");
+      const label = subscribeButton.querySelector("span");
+      if (label) {
+         label.textContent = "Processing...";
+      } else {
+         subscribeButton.textContent = "Processing...";
+      }
+   });
+}
+</script>
 
 </body>
 </html>
