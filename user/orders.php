@@ -32,7 +32,7 @@ if (!isset($user_id)) {
 
 <section class="placed-orders">
 
-   <h1 class="title">subscription history</h1>
+   <h1 class="title">Current Subscription</h1>
 
    <div class="box-container">
 

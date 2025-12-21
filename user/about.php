@@ -39,14 +39,14 @@ if (!isset($user_id)) {
             <img src="../images/about-img-1.png" alt="Freshly prepared meal ingredients">
             <h3>why choose us?</h3>
             <p>NutriBox offers chef-prepared meals designed with nutrition-first portions and clear calorie targets. Every plan supports consistent healthy eating without sacrificing taste or variety.</p>
-            <a href="contact.php" class="btn">contact us</a>
+            <a href="contact.php" class="btn">Contact Us</a>
          </div>
 
          <div class="box">
             <img src="../images/about-img-2.png" alt="Balanced nutrition-focused meals">
             <h3>what we provide?</h3>
             <p>Weekly rotating meal plans, fresh ingredients, and convenient ordering with pickup slots that fit your schedule. Choose from balanced, high-protein, or plant-based plans tailored to your goals.</p>
-            <a href="shop.php" class="btn">our shop</a>
+            <a href="shop.php" class="btn">Our Meal Plans</a>
          </div>
 
       </div>
