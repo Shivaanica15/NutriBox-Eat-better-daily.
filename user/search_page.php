@@ -23,9 +23,11 @@ if (isset($_POST["add_to_wishlist"])) {
     ];
 
     $check_subscription = $conn->prepare(
-        "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status IN ('Active','Pending')",
+        "SELECT COUNT(*) AS total
+         FROM `subscriptions`
+         WHERE user_id = ? AND meal_plan_id = ? AND status IN ('Active','Pending')",
     );
-    $check_subscription->execute([$user_id]);
+    $check_subscription->execute([$user_id, $meal_plan_id]);
     $subscription_total = (int) $check_subscription->fetch(PDO::FETCH_ASSOC)[
         "total"
     ];
@@ -59,10 +61,22 @@ if (isset($_POST["subscribe"])) {
     $check_active->execute([$user_id]);
     $active_total = (int) $check_active->fetch(PDO::FETCH_ASSOC)["total"];
 
+    $check_pending_same = $conn->prepare(
+        "SELECT COUNT(*) AS total
+         FROM `subscriptions`
+         WHERE user_id = ? AND meal_plan_id = ? AND status = 'Pending'",
+    );
+    $check_pending_same->execute([$user_id, $meal_plan_id]);
+    $pending_same_total = (int) $check_pending_same->fetch(PDO::FETCH_ASSOC)[
+        "total"
+    ];
+
     if (!$plan) {
         $message[] = "meal plan not found!";
     } elseif ($active_total > 0) {
         $message[] = "you already have an active subscription!";
+    } elseif ($pending_same_total > 0) {
+        $message[] = "plan already selected for subscription!";
     } else {
         $start_date = date("Y-m-d");
         $end_date = date(
@@ -71,19 +85,22 @@ if (isset($_POST["subscribe"])) {
         );
 
         $check_pending = $conn->prepare(
-            "SELECT COUNT(*) AS total FROM `subscriptions` WHERE user_id = ? AND status = 'Pending'",
+            "SELECT id FROM `subscriptions` WHERE user_id = ? AND status = 'Pending' ORDER BY id DESC LIMIT 1",
         );
         $check_pending->execute([$user_id]);
-        $pending_total = (int) $check_pending->fetch(PDO::FETCH_ASSOC)["total"];
+        $pending = $check_pending->fetch(PDO::FETCH_ASSOC);
 
-        if ($pending_total > 0) {
+        if ($pending) {
             $update_pending = $conn->prepare(
-                "UPDATE `subscriptions` SET meal_plan_id = ?, start_date = ?, end_date = ?, payment_status = 'unpaid' WHERE user_id = ? AND status = 'Pending'",
+                "UPDATE `subscriptions`
+                 SET meal_plan_id = ?, start_date = ?, end_date = ?, payment_status = 'unpaid'
+                 WHERE id = ? AND user_id = ?",
             );
             $update_pending->execute([
                 $meal_plan_id,
                 $start_date,
                 $end_date,
+                $pending["id"],
                 $user_id,
             ]);
         } else {
