@@ -26,6 +26,10 @@ if (isset($_GET["delete_all"])) {
     $delete_wishlist_item->execute([$user_id]);
     header("location:wishlist.php");
 }
+
+if (isset($_GET["removed"])) {
+    $message[] = "plan removed from wishlist!";
+}
 ?>
 
 <!DOCTYPE html>

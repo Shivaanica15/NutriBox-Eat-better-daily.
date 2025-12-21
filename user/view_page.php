@@ -45,6 +45,19 @@ if (isset($_POST["add_to_wishlist"])) {
     }
 }
 
+if (isset($_POST["remove_from_wishlist"])) {
+    $meal_plan_id = $_POST["meal_plan_id"];
+    $meal_plan_id = filter_var($meal_plan_id, FILTER_SANITIZE_NUMBER_INT);
+
+    $delete_wishlist = $conn->prepare(
+        "DELETE FROM `wishlist` WHERE user_id = ? AND meal_plan_id = ?",
+    );
+    $delete_wishlist->execute([$user_id, $meal_plan_id]);
+
+    header("location:wishlist.php?removed=1");
+    exit();
+}
+
 if (isset($_POST["subscribe"])) {
     $meal_plan_id = $_POST["meal_plan_id"];
     $meal_plan_id = filter_var($meal_plan_id, FILTER_SANITIZE_NUMBER_INT);
@@ -123,6 +136,16 @@ if (isset($_POST["subscribe"])) {
 
 $meal_plan_id = $_GET["pid"] ?? ($_GET["id"] ?? "");
 $meal_plan_id = filter_var($meal_plan_id, FILTER_SANITIZE_NUMBER_INT);
+
+$is_in_wishlist = false;
+if (!empty($meal_plan_id)) {
+    $check_wishlist = $conn->prepare(
+        "SELECT COUNT(*) AS total FROM `wishlist` WHERE user_id = ? AND meal_plan_id = ?",
+    );
+    $check_wishlist->execute([$user_id, $meal_plan_id]);
+    $is_in_wishlist =
+        (int) $check_wishlist->fetch(PDO::FETCH_ASSOC)["total"] > 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -162,8 +185,12 @@ $meal_plan_id = filter_var($meal_plan_id, FILTER_SANITIZE_NUMBER_INT);
       <p><strong>Calories:</strong> <?= $fetch_plan["calories"] ?> / day</p>
       <p><strong>Duration:</strong> <?= $fetch_plan["duration"] ?> days</p>
       <input type="hidden" name="meal_plan_id" value="<?= $fetch_plan["id"] ?>">
-      <input type="submit" value="save plan" class="option-btn" name="add_to_wishlist">
-      <input type="submit" value="subscribe now" class="btn" name="subscribe">
+      <?php if ($is_in_wishlist) { ?>
+         <input type="submit" value="remove from wishlist" class="delete-btn" name="remove_from_wishlist">
+      <?php } else { ?>
+         <input type="submit" value="save plan" class="option-btn" name="add_to_wishlist">
+         <input type="submit" value="subscribe now" class="btn" name="subscribe">
+      <?php } ?>
    </form>
    <?php }
    } else {
