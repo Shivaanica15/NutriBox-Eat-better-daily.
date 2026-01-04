@@ -44,6 +44,11 @@ function admin_nav_link($label, $href, $icon, $aliases = [])
       admin_nav_link("User Profiles", "admin_user_profiles.php", "fa-id-card");
       admin_nav_link("Users", "admin_users.php", "fa-users");
       admin_nav_link("Messages", "admin_contacts.php", "fa-envelope");
+      admin_nav_link(
+          "Notifications",
+          "admin_send_notifications.php",
+          "fa-bell",
+      );
       admin_nav_link("Schema Installer", "admin_schema.php", "fa-database");
       ?>
    </nav>
@@ -62,11 +67,7 @@ function admin_nav_link($label, $href, $icon, $aliases = [])
          </div>
       </div>
       <a href="admin_update_profile.php" class="btn">update profile</a>
-      <a href="../user/logout.php" class="delete-btn">logout</a>
-      <div class="flex-btn">
-         <a href="login.php" class="option-btn">login</a>
-         <a href="register.php" class="option-btn">register</a>
-      </div>
+      <a href="logout.php" class="delete-btn">logout</a>
    </div>
 </aside>
 

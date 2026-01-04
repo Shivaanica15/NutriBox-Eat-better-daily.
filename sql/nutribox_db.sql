@@ -291,15 +291,15 @@ INSERT INTO subscription_pickup_slots (subscription_id, pickup_date, time_from, 
 
 -- Insert Data: 10 Subscription Meals
 INSERT INTO subscription_meals (subscription_id, meal_date, status) VALUES
-(1, '2025-01-02', 'Delivered'),
-(1, '2025-01-03', 'Delivered'),
-(1, '2025-01-04', 'Delivered'),
-(2, '2025-01-16', 'Delivered'),
+(1, '2025-01-02', 'PickedUp'),
+(1, '2025-01-03', 'PickedUp'),
+(1, '2025-01-04', 'PickedUp'),
+(2, '2025-01-16', 'PickedUp'),
 (2, '2025-01-17', 'Pending'),
-(3, '2025-02-02', 'Delivered'),
-(3, '2025-02-03', 'Delivered'),
-(5, '2025-03-02', 'Delivered'),
-(7, '2025-04-02', 'Delivered'),
+(3, '2025-02-02', 'PickedUp'),
+(3, '2025-02-03', 'PickedUp'),
+(5, '2025-03-02', 'PickedUp'),
+(7, '2025-04-02', 'PickedUp'),
 (9, '2025-05-02', 'Pending');
 
 -- Insert Data: 10 Pickup Slot Templates

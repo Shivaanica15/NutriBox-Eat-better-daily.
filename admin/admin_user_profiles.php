@@ -1,15 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../db_guard.php";
-
-session_start();
-
-$admin_id = $_SESSION["admin_id"];
-
-if (!isset($admin_id)) {
-    header("location:login.php");
-}
+require_once __DIR__ . "/admin_auth.php";
 
 $allowed_goals = ["Weight Loss", "Muscle Gain", "Diabetic", "Custom"];
 
@@ -211,5 +202,3 @@ $goal_option
 
 </body>
 </html>
-
-

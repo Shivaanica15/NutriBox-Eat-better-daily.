@@ -1,15 +1,7 @@
 <?php
 
-@include "../config.php";
+require_once __DIR__ . "/admin_auth.php";
 require_once __DIR__ . "/../notifications_helper.php";
-
-session_start();
-
-$admin_id = $_SESSION["admin_id"];
-
-if (!isset($admin_id)) {
-    header("location:login.php");
-}
 
 function log_subscription_action($conn, $subscription_id, $action)
 {
@@ -512,5 +504,3 @@ if (isset($_POST["reject_plan_change"])) {
 
 </body>
 </html>
-
-

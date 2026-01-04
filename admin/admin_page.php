@@ -1,15 +1,6 @@
 <?php
 
-@include "../config.php";
-
-session_start();
-
-$admin_id = $_SESSION["admin_id"];
-
-if (!isset($admin_id)) {
-    header("location:login.php");
-}
-?>
+require_once __DIR__ . "/admin_auth.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -143,6 +134,23 @@ if (!isset($admin_id)) {
       <a href="admin_contacts.php" class="btn">see messages</a>
       </div>
 
+      <div class="box">
+      <div class="stat-icon"><i class="fas fa-bell"></i></div>
+      <?php
+      $number_of_notifications = 0;
+      if (table_exists($conn, "notifications")) {
+          $select_notifications = $conn->prepare(
+              "SELECT COUNT(*) FROM `notifications` WHERE is_read = 0",
+          );
+          $select_notifications->execute();
+          $number_of_notifications = (int) $select_notifications->fetchColumn();
+      }
+      ?>
+      <h3 class="stat-value" data-count="<?= $number_of_notifications ?>"><?= $number_of_notifications ?></h3>
+      <p class="stat-label">pending notifications</p>
+      <a href="admin_send_notifications.php" class="btn">send notifications</a>
+      </div>
+
    </div>
 
 </section>
@@ -190,4 +198,3 @@ if (!isset($admin_id)) {
 
 </body>
 </html>
-

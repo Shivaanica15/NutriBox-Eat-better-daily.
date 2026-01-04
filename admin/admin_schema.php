@@ -1,15 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../config.php";
-require_once __DIR__ . "/../db_guard.php";
-
-session_start();
-
-$admin_id = $_SESSION["admin_id"];
-
-if (!isset($admin_id)) {
-    header("location:login.php");
-}
+require_once __DIR__ . "/admin_auth.php";
 
 function column_exists($conn, $table_name, $column_name)
 {
@@ -376,5 +367,3 @@ try {
 
 </body>
 </html>
-
-
